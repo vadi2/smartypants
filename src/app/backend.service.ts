@@ -21,10 +21,6 @@ export class BackendService {
     this.iss = iss;
   }
 
-  locateEndpoints() {
-
-  }
-
   fetchWellKnownConfiguration() {
     this.http.get(this.iss + this.wellKnownLocation).subscribe((res: Response) => {
       console.log(res);
@@ -39,26 +35,33 @@ export class BackendService {
 
   fetchOAuthFromMetadata() {
     this.http.get<[]>(this.iss + this.metadataLocation).subscribe((res: {}) => {
-      this.extractOAuthFromMetadata(res);
+      const response = this.extractOAuthFromMetadata(res);
+      this.authorizeLocation = response.authorize;
+      this.tokenLocation = response.token;
     }, error => {
       console.log(error);
     });
   }
 
-  extractOAuthFromMetadata(metadata: {}) {
+  extractOAuthFromMetadata(metadata: {}): { authorize: string, token: string } {
+    let authorize: string;
+    let token: string;
     // console.log(`extracted ${jsonpath.query(metadata, '$.rest[*].security.extension[*].url')}`);
     // using jsonpath with angular was proving unduly difficult
     metadata.rest[0].security.extension.forEach(element => {
       if (element.url === 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris') {
         element.extension.forEach(extension => {
           if (extension.url === 'authorize') {
-            this.authorizeLocation = extension.valueUri;
+            authorize = extension.valueUri;
           } else if (extension.url === 'token') {
-            this.tokenLocation = extension.valueUri;
+            token = extension.valueUri;
           }
         });
       }
     });
-    console.log(`${this.authorizeLocation} and ${this.tokenLocation}`);
+
+    console.log(`${authorize} and ${token}`);
+    return { authorize, token };
   }
+
 }
