@@ -9,31 +9,16 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./launch.component.css']
 })
 export class LaunchComponent implements OnInit {
-  iss = 'nothing';
-  launch = 'nothing';
-
   constructor(private route: ActivatedRoute) { }
 
-  // iss: string;
-  // launch: string;
+  iss: string;
+  launch: string;
 
   ngOnInit() {
+    this.route.queryParamMap
+      .subscribe(p => this.iss = p.get('iss'));
 
-    this.route
-      .queryParamMap
-      .pipe(map(params => params.get('iss'))).forEach(element => {
-        this.iss = element;
-      });
-
-    this.route
-      .queryParamMap
-      .pipe(map(params => params.get('launch'))).forEach(element => {
-        this.launch = element;
-      });
-
-    // sessionId.forEach(element => {
-    //   console.log("raralala " + element);
-    // });
+    this.route.queryParamMap
+      .subscribe(p => this.launch = p.get('launch'));
   }
-
 }
