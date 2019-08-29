@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 // import {  } from 'jsonpath';
-// import * as jsonpath from 'jsonpath';
+import * as jsonpath from 'jsonpath';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +47,7 @@ export class BackendService {
 
   extractOAuthFromMetadata(metadata: {}) {
     // console.log(`extracted ${jsonpath.query(metadata, '$.rest[*].security.extension[*].url')}`);
-    // console.log(metadata.rest[0]);
-    // for (var extension in metadata.rest[0].security.extension) {
-    //   console.log(extension);
-    // }
+    // using jsonpath with angular was proving unduly difficult
     metadata.rest[0].security.extension.forEach(element => {
       if (element.url === 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris') {
         element.extension.forEach(extension => {
