@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+// import {  } from 'jsonpath';
+// import * as jsonpath from 'jsonpath';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,9 @@ export class BackendService {
   iss: string;
   launch: string;
   readonly wellKnownLocation = '/.well-known/smart-configuration.json';
-  readonly metadataLocation = "/metadata";
+  readonly metadataLocation = '/metadata';
+  authorizeLocation: string;
+  tokenLocation: string;
 
   constructor(private http: HttpClient) { }
 
@@ -42,7 +46,22 @@ export class BackendService {
   }
 
   extractOAuthFromMetadata(metadata: {}) {
-    console.log('extracting');
-    console.log(metadata.rest);
+    // console.log(`extracted ${jsonpath.query(metadata, '$.rest[*].security.extension[*].url')}`);
+    // console.log(metadata.rest[0]);
+    // for (var extension in metadata.rest[0].security.extension) {
+    //   console.log(extension);
+    // }
+    metadata.rest[0].security.extension.forEach(element => {
+      if (element.url === 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris') {
+        element.extension.forEach(extension => {
+          if (extension.url === 'authorize') {
+            this.authorizeLocation = extension.valueUri;
+          } else if (extension.url === 'token') {
+            this.tokenLocation = extension.valueUri;
+          }
+        });
+      }
+    });
+    console.log(`${this.authorizeLocation} and ${this.tokenLocation}`);
   }
 }
