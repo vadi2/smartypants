@@ -6,12 +6,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LaunchComponent } from './launch/launch.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { OauthRedirectComponent } from './oauth-redirect/oauth-redirect.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LaunchComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    OauthRedirectComponent
   ],
   imports: [
     BrowserModule,
