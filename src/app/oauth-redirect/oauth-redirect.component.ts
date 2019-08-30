@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BackendService } from '../backend.service';
 
 @Component({
   selector: 'app-oauth-redirect',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OauthRedirectComponent implements OnInit {
 
-  constructor() { }
+  constructor(private backend: BackendService) { }
 
   ngOnInit() {
+    this.backend.printTokenLocation();
   }
 
 }

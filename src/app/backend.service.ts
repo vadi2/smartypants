@@ -22,6 +22,10 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
+  printTokenLocation() {
+    console.log(`get token from: ${this.tokenLocation}`);
+  }
+
   setLaunchParameters(launch: string, iss: string) {
     this.launch = launch;
     this.iss = iss;
