@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BackendService } from '../backend.service';
 
 @Component({
@@ -7,11 +8,23 @@ import { BackendService } from '../backend.service';
   styleUrls: ['./oauth-redirect.component.css']
 })
 export class OauthRedirectComponent implements OnInit {
+  constructor(
+    private route: ActivatedRoute,
+    private backend: BackendService
+  ) { }
 
-  constructor(private backend: BackendService) { }
+  code: string;
+  state: string;
+  stateError: string;
 
   ngOnInit() {
-    this.backend.printTokenLocation();
+    this.route.queryParamMap
+      .subscribe(p => this.code = p.get('code'));
+
+    this.route.queryParamMap
+      .subscribe(p => this.state = p.get('state'));
+
+    this.stateError = this.backend.exchangeAuthorizationcode(this.code, this.state);
   }
 
 }

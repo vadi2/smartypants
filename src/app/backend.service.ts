@@ -1,16 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 // import {  } from 'jsonpath';
 import * as jsonpath from 'jsonpath';
+import * as uuid from 'uuid';
+import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
+
+const TOKEN_URL_KEY = 'token-url-key';
+const STATE_KEY = 'state-key';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
-  iss: string;
-  launch: string;
   readonly wellKnownLocation = '/.well-known/smart-configuration.json';
   readonly metadataLocation = '/metadata';
+
+  fhirEndpoint: string;
+  launch: string;
+
   authorizeLocation: string;
   tokenLocation: string;
 
@@ -19,21 +26,30 @@ export class BackendService {
   // should be retrieved from the route data
   readonly redirectUri = `${window.location.origin}/oauth-redirect`;
 
+  // this information is populated upon successful OAuth negotiation
+  accessToken: string;
+  expiresIn: number;
+  needPatientBanner: boolean;
+  grantedScope: string;
+  smartStyleUrl: string;
+  tokenType: string;
 
-  constructor(private http: HttpClient) { }
-
-  printTokenLocation() {
-    console.log(`get token from: ${this.tokenLocation}`);
+  constructor(
+    private http: HttpClient,
+    @Inject(SESSION_STORAGE) private storage: StorageService
+  ) {
+    this.tokenLocation = this.storage.get(TOKEN_URL_KEY);
   }
 
   setLaunchParameters(launch: string, iss: string) {
     this.launch = launch;
-    this.iss = iss;
+    this.fhirEndpoint = iss;
+    console.log(`FHIR endpoint: ${this.fhirEndpoint}`);
   }
 
   fetchOAuthEndpoints() {
     // fetch well known location first
-    this.http.get(this.iss + this.wellKnownLocation).subscribe((res: Response) => {
+    this.http.get(this.fhirEndpoint + this.wellKnownLocation).subscribe((res: Response) => {
       console.log(res);
     }, error => {
       if (error.status !== 404) {
@@ -46,10 +62,14 @@ export class BackendService {
   }
 
   fetchOAuthFromMetadata() {
-    this.http.get<[]>(this.iss + this.metadataLocation).subscribe((res: {}) => {
+    this.http.get<[]>(this.fhirEndpoint + this.metadataLocation).subscribe((res: {}) => {
       const response = this.extractOAuthFromMetadata(res);
       this.authorizeLocation = response.authorize;
       this.tokenLocation = response.token;
+      this.storage.set(TOKEN_URL_KEY, this.tokenLocation);
+
+      const newState = uuid.v4();
+      this.storage.set(STATE_KEY, newState);
 
       // this is horrible and should not be so
       const oAuthRedirect = `${this.authorizeLocation}?`
@@ -58,8 +78,8 @@ export class BackendService {
         + `redirect_uri=${encodeURIComponent(this.redirectUri)}&`
         + `launch=${encodeURIComponent(this.launch)}&`
         + `scope=${encodeURIComponent('patient/*.read')}&`
-        + `state=1234&`
-        + `aud=${encodeURIComponent(this.iss)}`;
+        + `state=${encodeURIComponent(newState)}&`
+        + `aud=${encodeURIComponent(this.fhirEndpoint)}`;
 
       console.log(oAuthRedirect);
       window.location.replace(oAuthRedirect);
@@ -68,7 +88,7 @@ export class BackendService {
     });
   }
 
-  extractOAuthFromMetadata(metadata: {}): { authorize: string, token: string } {
+  extractOAuthFromMetadata(metadata: any): { authorize: string, token: string } {
     let authorize: string;
     let token: string;
     // console.log(`extracted ${jsonpath.query(metadata, '$.rest[*].security.extension[*].url')}`);
@@ -89,4 +109,31 @@ export class BackendService {
     return { authorize, token };
   }
 
+  exchangeAuthorizationcode(code: string, state: string): string {
+    if (state !== this.storage.get(STATE_KEY)) {
+      return 'OAuth server gave us back the wrong state - authorization cannot continue.';
+    }
+
+    const payload = new HttpParams()
+      .set('grant_type', 'authorization_code')
+      .set('code', code)
+      .set('redirect_uri', this.redirectUri)
+      .set('client_id', this.clientId);
+
+    this.http.post<{}>(this.tokenLocation, payload).subscribe((res: {}) => {
+      this.extractAuthorizedData(res);
+    }, error => {
+        // this should be returned async...
+        console.log(error);
+    });
+  }
+
+  extractAuthorizedData(authorizationResponse: any) {
+    this.accessToken = authorizationResponse.access_token;
+    this.expiresIn = authorizationResponse.expires_in;
+    this.needPatientBanner = authorizationResponse.need_patient_banner;
+    this.grantedScope = authorizationResponse.scope;
+    this.smartStyleUrl = authorizationResponse.smart_style_url;
+    this.tokenType = authorizationResponse.token_type;
+  }
 }
