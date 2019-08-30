@@ -14,6 +14,12 @@ export class BackendService {
   authorizeLocation: string;
   tokenLocation: string;
 
+  // OAuth configuration data
+  readonly clientId = 'client12345';
+  // should be retrieved from the route data
+  readonly redirectUri = `${window.location.origin}/oauth-redirect`;
+
+
   constructor(private http: HttpClient) { }
 
   setLaunchParameters(launch: string, iss: string) {
@@ -42,7 +48,17 @@ export class BackendService {
       this.tokenLocation = response.token;
 
       // this is horrible and should not be so
-      window.location.replace(this.authorizeLocation);
+      const oAuthRedirect = `${this.authorizeLocation}?`
+        + `response_type=code&`
+        + `client_id=${encodeURIComponent(this.clientId)}&`
+        + `redirect_uri=${encodeURIComponent(this.redirectUri)}&`
+        + `launch=${encodeURIComponent(this.launch)}&`
+        + `scope=${encodeURIComponent('patient/*.read')}&`
+        + `state=1234&`
+        + `aud=${encodeURIComponent(this.iss)}`;
+
+      console.log(oAuthRedirect);
+      window.location.replace(oAuthRedirect);
     }, error => {
       console.log(error);
     });
