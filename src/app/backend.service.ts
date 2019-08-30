@@ -40,6 +40,9 @@ export class BackendService {
       const response = this.extractOAuthFromMetadata(res);
       this.authorizeLocation = response.authorize;
       this.tokenLocation = response.token;
+
+      // this is horrible and should not be so
+      window.location.replace(this.authorizeLocation);
     }, error => {
       console.log(error);
     });
