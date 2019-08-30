@@ -26,6 +26,6 @@ export class LaunchComponent implements OnInit {
       .subscribe(p => this.launch = p.get('launch'));
 
     this.backend.setLaunchParameters(this.launch, this.iss);
-    this.backend.fetchWellKnownConfiguration();
+    this.backend.fetchOAuthEndpoints();
   }
 }

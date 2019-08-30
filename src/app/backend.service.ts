@@ -21,7 +21,8 @@ export class BackendService {
     this.iss = iss;
   }
 
-  fetchWellKnownConfiguration() {
+  fetchOAuthEndpoints() {
+    // fetch well known location first
     this.http.get(this.iss + this.wellKnownLocation).subscribe((res: Response) => {
       console.log(res);
     }, error => {
@@ -29,6 +30,7 @@ export class BackendService {
         console.log(error);
       }
 
+      // if that doesn't work fallback to /metadata
       this.fetchOAuthFromMetadata();
     });
   }
@@ -47,7 +49,7 @@ export class BackendService {
     let authorize: string;
     let token: string;
     // console.log(`extracted ${jsonpath.query(metadata, '$.rest[*].security.extension[*].url')}`);
-    // using jsonpath with angular was proving unduly difficult
+    // coming up with the correct jsonpath was proving unduly difficult, esp filtering by the key part
     metadata.rest[0].security.extension.forEach(element => {
       if (element.url === 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris') {
         element.extension.forEach(extension => {
