@@ -1,27 +1,83 @@
 <p>This is a super basic app to understand the different OAuth workflows.</p>
 <p>The following workflows are currently supported:</p>
 
-<table>
+<table class="table table-striped" border="1">
   <tbody>
     <tr>
-      <td>&nbsp;Workflow</td>
-      <td>Works?</td>
-      <td>How to launch</td>
+      <th scope="col">Workflow</th>
+      <th scope="col">Works?</th>
+      <th scope="col">How to launch</th>
     </tr>
     <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
+      <td>
+        Provider EHR Launch
+        <small>(practitioner opens the app from within an EHR)</small>
+      </td>
+      <td>✅</td>
+      <td>
+        <a
+          href="http://launch.smarthealthit.org/?auth_error=&fhir_version_1=r4&fhir_version_2=r3&iss=&launch_ehr=1&launch_url=http%3A%2F%2Flocalhost%3A4200%2Flaunch&patient=&prov_skip_auth=1&provider=&pt_skip_auth=1&public_key=&sb=&sde=&sim_ehr=1&token_lifetime=15&user_pt="
+        >
+          Click link</a
+        >
+        and then hit <strong>Launch</strong>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Patient Portal Launch
+        <small>(patient opens the app from within patient portal)</small>
+      </td>
+      <td>✘</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
+      <td>
+        Provider Standalone Launch
+        <small
+          >(practitioner opens the app directly and connects to FHIR)</small
+        >
+      </td>
+      <td>✘</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
+      <td>
+        Patient Standalone Launch
+        <small>(patient opens the app directly and connects to FHIR)</small>
+      </td>
+      <td>✘</td>
       <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>
+        Provider Standalone Launch
+        <small
+          >(practitioner opens the app directly and connects to FHIR)</small
+        >
+      </td>
+      <td>✘</td>
       <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>
+        Backend Service
+        <small
+          >(app connects to FHIR without user login)</small
+        >
+      </td>
+      <td>✘</td>
       <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>
+        CDS Hooks Service
+        <small
+          >(test your CDS services)</small
+        >
+      </td>
+      <td>✘</td>
+      <td>(not a CDS hooks service)</td>
     </tr>
   </tbody>
 </table>
