@@ -24,7 +24,12 @@ export class OauthRedirectComponent implements OnInit {
     this.route.queryParamMap
       .subscribe(p => this.state = p.get('state'));
 
-    this.stateError = this.backend.exchangeAuthorizationcode(this.code, this.state);
+    this.stateError = this.backend.exchangeAuthorizationcode(this.code, this.state).subscribe((res: {}) => {
+      this.backend.extractAuthorizedData(res);
+    }, error => {
+      // this should be returned async...
+      console.log(error);
+    });
   }
 
 }

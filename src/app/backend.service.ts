@@ -111,7 +111,7 @@ export class BackendService {
     return { authorize, token };
   }
 
-  exchangeAuthorizationcode(code: string, state: string): string {
+  exchangeAuthorizationcode(code: string, state: string): any {
     if (state !== this.storage.get(STATE_KEY)) {
       return 'OAuth server gave us back the wrong state - authorization cannot continue.';
     }
@@ -122,12 +122,7 @@ export class BackendService {
       .set('redirect_uri', this.redirectUri)
       .set('client_id', this.clientId);
 
-    this.http.post<{}>(this.tokenLocation, payload).subscribe((res: {}) => {
-      this.extractAuthorizedData(res);
-    }, error => {
-        // this should be returned async...
-        console.log(error);
-    });
+    return this.http.post<{}>(this.tokenLocation, payload);
   }
 
   extractAuthorizedData(authorizationResponse: any) {
