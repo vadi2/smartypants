@@ -16,10 +16,12 @@ export class BackendService {
   readonly wellKnownLocation = '/.well-known/smart-configuration.json';
   readonly metadataLocation = '/metadata';
 
-  fhirEndpoint: string;
+  fhirEndpoint: string; // iss in SMART on FHIR
   launch: string;
 
+  // where you go first to greet yourself and get an authorization code
   authorizeLocation: string;
+  // afterwards, exchange said code for a token
   tokenLocation: string;
 
   // OAuth configuration data
