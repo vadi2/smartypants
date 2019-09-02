@@ -8,6 +8,7 @@ import { LaunchComponent } from './launch/launch.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { OauthRedirectComponent } from './oauth-redirect/oauth-redirect.component';
 import { OauthFlowCompletedComponent } from './oauth-flow-completed/oauth-flow-completed.component';
+import { HomepageComponent } from './homepage/homepage.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { OauthFlowCompletedComponent } from './oauth-flow-completed/oauth-flow-c
     LaunchComponent,
     PageNotFoundComponent,
     OauthRedirectComponent,
-    OauthFlowCompletedComponent
+    OauthFlowCompletedComponent,
+    HomepageComponent
   ],
   imports: [
     BrowserModule,

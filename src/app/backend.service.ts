@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import * as jsonpath from 'jsonpath';
 import * as uuid from 'uuid';
 import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
+import { Router } from '@angular/router';
 
 const TOKEN_URL_KEY = 'token-url-key';
 const STATE_KEY = 'state-key';
@@ -36,7 +37,8 @@ export class BackendService {
 
   constructor(
     private http: HttpClient,
-    @Inject(SESSION_STORAGE) private storage: StorageService
+    @Inject(SESSION_STORAGE) private storage: StorageService,
+    private router: Router
   ) {
     this.tokenLocation = this.storage.get(TOKEN_URL_KEY);
   }
@@ -135,5 +137,7 @@ export class BackendService {
     this.grantedScope = authorizationResponse.scope;
     this.smartStyleUrl = authorizationResponse.smart_style_url;
     this.tokenType = authorizationResponse.token_type;
+
+    this.router.navigate(['/oauth-completed']);
   }
 }
