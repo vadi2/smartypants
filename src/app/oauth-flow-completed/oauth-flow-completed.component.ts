@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BackendService } from '../backend.service';
 
 @Component({
   selector: 'app-oauth-flow-completed',
@@ -6,10 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./oauth-flow-completed.component.css']
 })
 export class OauthFlowCompletedComponent implements OnInit {
+  bearerToken: string;
 
-  constructor() { }
+  constructor(private backend: BackendService) { }
 
   ngOnInit() {
+    this.bearerToken = this.backend.accessToken;
   }
 
 }

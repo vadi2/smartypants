@@ -128,7 +128,7 @@ export class BackendService {
   }
 
   extractAuthorizedData(authorizationResponse: any) {
-    this.accessToken = authorizationResponse.access_token;
+    this.s = authorizationResponse.access_token;
     this.expiresIn = authorizationResponse.expires_in;
     this.needPatientBanner = authorizationResponse.need_patient_banner;
     this.grantedScope = authorizationResponse.scope;
