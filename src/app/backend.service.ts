@@ -20,12 +20,12 @@ export class BackendService {
   launch: string;
 
   // where you go first to greet yourself and get an authorization code
-  authorizeLocation: string;
+  authorizeLocation: string = 'https://otasiam.lumc.nl/aselectserver/server/lumc_openidconnect_authorize';
   // afterwards, exchange said code for a token
-  tokenLocation: string;
+  tokenLocation: string = 'https://otasiam.lumc.nl/aselectserver/server/lumc_openidconnect_authorize';
 
   // OAuth configuration data
-  readonly clientId = 'client12345';
+  readonly clientId = 'AAAA-BBBB';
   // should be retrieved from the route data
   readonly redirectUri = `${window.location.origin}/oauth-redirect`;
 
@@ -42,13 +42,14 @@ export class BackendService {
     @Inject(SESSION_STORAGE) private storage: StorageService,
     private router: Router
   ) {
-    this.tokenLocation = this.storage.get(TOKEN_URL_KEY);
+    const storedLocation = this.storage.get(TOKEN_URL_KEY);
+    this.tokenLocation = storedLocation ? storedLocation : this.tokenLocation;
   }
 
   setLaunchParameters(launch: string, iss: string) {
     this.launch = launch;
     this.fhirEndpoint = iss;
-    console.log(`FHIR endpoint: ${this.fhirEndpoint}`);
+    console.log(`FHIR endpoint: ${this.fhirEndpoint}, unique launch code: ${iss}`);
   }
 
   fetchOAuthEndpoints() {
@@ -75,7 +76,6 @@ export class BackendService {
       const newState = uuid.v4();
       this.storage.set(STATE_KEY, newState);
 
-      // this is horrible and should not be so
       const oAuthRedirect = `${this.authorizeLocation}?`
         + `response_type=code&`
         + `client_id=${encodeURIComponent(this.clientId)}&`
@@ -85,7 +85,7 @@ export class BackendService {
         + `state=${encodeURIComponent(newState)}&`
         + `aud=${encodeURIComponent(this.fhirEndpoint)}`;
 
-      console.log(oAuthRedirect);
+      console.log(`oauth redirect is: ${oAuthRedirect}`);
       window.location.replace(oAuthRedirect);
     }, error => {
       console.log(error);
@@ -109,12 +109,15 @@ export class BackendService {
       }
     });
 
-    console.log(`${authorize} and ${token}`);
+    console.log(`authorize and token URLs: ${authorize} and ${token}`);
     return { authorize, token };
   }
 
   exchangeAuthorizationcode(code: string, state: string): any {
-    if (state !== this.storage.get(STATE_KEY)) {
+    if (this.storage.get(STATE_KEY) === undefined) {
+      console.log(`No state key recorded - allowing the given ${state}`);
+    } else if (state !== this.storage.get(STATE_KEY)) {
+      console.log(`State keys failed to match! Expected: ${this.storage.get(STATE_KEY)}, received: ${state}`);
       return 'OAuth server gave us back the wrong state - authorization cannot continue.';
     }
 
@@ -124,6 +127,7 @@ export class BackendService {
       .set('redirect_uri', this.redirectUri)
       .set('client_id', this.clientId);
 
+    console.log(`sending payload to: ${this.tokenLocation}`);
     return this.http.post<{}>(this.tokenLocation, payload);
   }
 

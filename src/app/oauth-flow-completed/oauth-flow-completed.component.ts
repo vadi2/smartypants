@@ -8,11 +8,17 @@ import { BackendService } from '../backend.service';
 })
 export class OauthFlowCompletedComponent implements OnInit {
   bearerToken: string;
+  expiresIn: number;
+  grantedScope: string;
+  tokenType: string;
 
   constructor(private backend: BackendService) { }
 
   ngOnInit() {
     this.bearerToken = this.backend.accessToken;
+    this.expiresIn = this.backend.expiresIn;
+    this.grantedScope = this.backend.grantedScope;
+    this.tokenType = this.backend.tokenType;
   }
 
 }

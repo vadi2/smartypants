@@ -1,3 +1,9 @@
 <h2>All done! You made it! Congratulations :) Successfully authorized OAuth workflow</h2>
 
-<p>You can now query patient data for the requested scope with the following token: {{this.bearerToken}}</p>
+<p>You can now query patient data for the requested scope with the following token: <pre>{{this.bearerToken}}</pre>
+
+<p>Granted scopes: {{this.grantedScope}}</p>
+
+<p>Expires in: {{this.expiresIn}} seconds.</p>
+
+<p>Token type: {{this.tokenType}}</p>
