@@ -31,11 +31,13 @@ export class BackendService {
 
   // this information is populated upon successful OAuth negotiation
   accessToken: string;
+  idToken: string;
   expiresIn: number;
   needPatientBanner: boolean;
   grantedScope: string;
   smartStyleUrl: string;
   tokenType: string;
+  authorizationResponse: string;
 
   constructor(
     private http: HttpClient,
@@ -133,11 +135,13 @@ export class BackendService {
 
   extractAuthorizedData(authorizationResponse: any) {
     this.accessToken = authorizationResponse.access_token;
+    this.idToken = authorizationResponse.id_token;
     this.expiresIn = authorizationResponse.expires_in;
     this.needPatientBanner = authorizationResponse.need_patient_banner;
     this.grantedScope = authorizationResponse.scope;
     this.smartStyleUrl = authorizationResponse.smart_style_url;
     this.tokenType = authorizationResponse.token_type;
+    this.authorizationResponse = authorizationResponse;
 
     this.router.navigate(['/oauth-completed']);
   }
