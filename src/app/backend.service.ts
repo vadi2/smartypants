@@ -26,6 +26,8 @@ export class BackendService {
 
   // OAuth configuration data
   readonly clientId = 'AAAA-BBBB';
+  readonly clientSecret = 'demodemo';
+
   // should be retrieved from the route data
   readonly redirectUri = `${window.location.origin}/oauth-redirect`;
 
@@ -129,8 +131,13 @@ export class BackendService {
       .set('redirect_uri', this.redirectUri)
       .set('client_id', this.clientId);
 
+    const token = btoa(`${this.clientId}:${this.clientSecret}`);
+    const header = new HttpHeaders({ "Authorization": `Basic ${token}`});
+
     console.log(`sending payload to: ${this.tokenLocation}`);
-    return this.http.post<{}>(this.tokenLocation, payload);
+    return this.http.post<{}>(this.tokenLocation, payload, {
+      headers: header
+    });
   }
 
   extractAuthorizedData(authorizationResponse: any) {
