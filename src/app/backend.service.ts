@@ -17,7 +17,7 @@ export class BackendService {
   readonly metadataLocation = '/metadata';
 
   fhirEndpoint: string; // iss in SMART on FHIR
-  launch: string;
+  launch: string; // Opaque identifier for this specific launch and any EHR context associated with it. This parameter must be communicated back to the EHR at authorization time by passing along a launch parameter (see example below).
 
   // where you go first to greet yourself and get an authorization code
   authorizeLocation: string;
