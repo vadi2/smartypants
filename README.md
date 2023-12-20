@@ -13,6 +13,15 @@ ng serve
 
 Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## ngrok hosting
+To host the app on ngrok:
+
+```
+ngrok http 4200 --domain ace-wallaby-aware.ngrok-free.app --host-header="localhost:4200"
+```
+
+(see the reason for [--host-header](https://stackoverflow.com/questions/45425721/invalid-host-header-when-ngrok-tries-to-connect-to-react-dev-server))
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
