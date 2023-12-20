@@ -25,7 +25,7 @@ export class BackendService {
   tokenLocation: string;
 
   // OAuth configuration data
-  readonly clientId = 'client12345';
+  readonly clientId = '9deb48a7-203c-4300-acb9-e1b00b601e2a';
   // should be retrieved from the route data
   readonly redirectUri = `${window.location.origin}/oauth-redirect`;
 
@@ -48,16 +48,16 @@ export class BackendService {
   setLaunchParameters(launch: string, iss: string) {
     this.launch = launch;
     this.fhirEndpoint = iss;
-    console.log(`FHIR endpoint: ${this.fhirEndpoint}`);
+    console.log(`Got launch parameters, FHIR endpoint: ${this.fhirEndpoint}, launch: ${this.launch}`);
   }
 
   fetchOAuthEndpoints() {
     // fetch well known location first
     this.http.get(this.fhirEndpoint + this.wellKnownLocation).subscribe((res: Response) => {
-      console.log(res);
+      console.log(`Got well known location: ${this.fhirEndpoint + this.wellKnownLocation}`);
     }, error => {
       if (error.status !== 404) {
-        console.log(error);
+        console.log(`Error fetching well known location: ${this.fhirEndpoint + this.wellKnownLocation}`);
       }
 
       // if that doesn't work fallback to /metadata
@@ -81,14 +81,14 @@ export class BackendService {
         + `client_id=${encodeURIComponent(this.clientId)}&`
         + `redirect_uri=${encodeURIComponent(this.redirectUri)}&`
         + `launch=${encodeURIComponent(this.launch)}&`
-        + `scope=${encodeURIComponent('patient/*.read')}&`
+        + `scope=${encodeURIComponent('openid Patient.read Patient.search')}&`
         + `state=${encodeURIComponent(newState)}&`
         + `aud=${encodeURIComponent(this.fhirEndpoint)}`;
 
-      console.log(oAuthRedirect);
+      console.log(`Got oauth information from metadata, redirecting to ${oAuthRedirect}`);
       window.location.replace(oAuthRedirect);
     }, error => {
-      console.log(error);
+      console.log(`Error fetching metadata: ${this.fhirEndpoint + this.metadataLocation}`);
     });
   }
 
@@ -115,6 +115,7 @@ export class BackendService {
 
   exchangeAuthorizationcode(code: string, state: string): any {
     if (state !== this.storage.get(STATE_KEY)) {
+      console.log(`State mismatch, authorization cannot continue. Got ${state} versus ${this.storage.get(STATE_KEY)}`);
       return 'OAuth server gave us back the wrong state - authorization cannot continue.';
     }
 

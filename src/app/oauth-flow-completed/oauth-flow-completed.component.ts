@@ -8,11 +8,13 @@ import { BackendService } from '../backend.service';
 })
 export class OauthFlowCompletedComponent implements OnInit {
   bearerToken: string;
+  fhirEndpoint: string;
 
   constructor(private backend: BackendService) { }
 
   ngOnInit() {
     this.bearerToken = this.backend.accessToken;
+    this.fhirEndpoint = this.backend.fhirEndpoint;
   }
 
 }
