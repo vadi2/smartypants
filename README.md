@@ -2,9 +2,9 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.0.
 
-## Development server
+## Development app
 
-For a dev server:
+To run the dev app:
 
 ```
 export NODE_OPTIONS=--openssl-legacy-provider
@@ -13,8 +13,8 @@ ng serve
 
 Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## ngrok hosting
-To host the app on ngrok:
+### ngrok hosting
+To host the development app on ngrok:
 
 ```
 ngrok http 4200 --domain ace-wallaby-aware.ngrok-free.app --host-header="localhost:4200"
