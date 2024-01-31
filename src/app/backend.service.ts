@@ -81,7 +81,7 @@ export class BackendService {
         + `client_id=${encodeURIComponent(this.clientId)}&`
         + `redirect_uri=${encodeURIComponent(this.redirectUri)}&`
         + `launch=${encodeURIComponent(this.launch)}&`
-        + `scope=${encodeURIComponent('openid Patient.read Patient.search')}&`
+        + `scope=${encodeURIComponent('openid launch Patient.read Patient.search')}&`
         + `state=${encodeURIComponent(newState)}&`
         + `aud=${encodeURIComponent(this.fhirEndpoint)}`;
 
